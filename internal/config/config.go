@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/home-IoT/jupiter-cli/internal/cli"
+	"github.com/home-IoT/home-weather/internal/cli"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"

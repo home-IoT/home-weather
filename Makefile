@@ -9,7 +9,7 @@ GOOS ?= linux
 SWAGGER_FILE=api/jupiter.yml
 
 PKGS := $(shell go list ./... | grep -vF /vendor/)
-JUPITER_CLI_PACKAGE=github.com/home-IoT/jupiter-cli/internal/cli
+CLI_PACKAGE=github.com/home-IoT/home-weather/internal/cli
 MAIN_FILE=cmd/home-weather/main.go
 
 # --- Repo 
@@ -65,7 +65,7 @@ go-validate:
 	@echo golint
 	@golint -set_exit_status $(PKGS)
 
-# --- Jupiter Server
+# --- Home Weather CLI
 
 go-build-linux:
 	@echo "build linux binary"
@@ -86,7 +86,7 @@ go-build-mac:
 TARGET ?= $(EXECUTABLE)
 
 go-build: 
-	go build -ldflags="-X $(JUPITER_CLI_PACKAGE).GitRevision=$(shell git rev-parse HEAD) -X $(JUPITER_CLI_PACKAGE).BuildVersion=$(VERSION) -X $(JUPITER_CLI_PACKAGE).BuildTime=$(DATE)" -i -o ./bin/$(TARGET) $(MAIN_FILE)
+	go build -ldflags="-X $(CLI_PACKAGE).GitRevision=$(shell git rev-parse HEAD) -X $(CLI_PACKAGE).BuildVersion=$(VERSION) -X $(CLI_PACKAGE).BuildTime=$(DATE)" -i -o ./bin/$(TARGET) $(MAIN_FILE)
 
 go-build-all: go-build-pi go-build-linux go-build-windows go-build-mac
 

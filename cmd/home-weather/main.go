@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/alecthomas/kingpin"
-	"github.com/home-IoT/jupiter-cli/internal/cli"
-	"github.com/home-IoT/jupiter-cli/internal/config"
+	"github.com/home-IoT/home-weather/internal/cli"
+	"github.com/home-IoT/home-weather/internal/config"
 )
 
 var (
