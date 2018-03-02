@@ -13,7 +13,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/home-IoT/jupiter-cli/gen/models"
+	"github.com/home-IoT/home-weather/gen/models"
 )
 
 // GetSensorDataReader is a Reader for the GetSensorData structure.

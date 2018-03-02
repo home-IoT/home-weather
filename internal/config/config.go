@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/home-IoT/home-weather/internal/cli"
+	"github.com/home-IoT/home-weather/internal/log"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -38,12 +38,12 @@ func writeWeatherConfig(data *WeatherConfig) {
 
 func writeConfig(data interface{}, configName string) {
 	if yamlData, err := yaml.Marshal(&data); err != nil {
-		cli.Fatalf("cannot encode config data to yaml <%e>", err)
+		log.Fatalf("cannot encode config data to yaml <%e>", err)
 	} else {
 		homeWeatherPath := ensureConfigFolderExists(nil)
 
 		if err := ioutil.WriteFile(getConfigFilePath(configName), yamlData, 0600); err != nil {
-			cli.Fatalf("cannot write config to %s <%e>", homeWeatherPath, err)
+			log.Fatalf("cannot write config to %s <%e>", homeWeatherPath, err)
 		}
 	}
 }
@@ -58,7 +58,7 @@ func ensureConfigFolderExists(folder *string) string {
 
 	if _, err := os.Stat(homeWeatherPath); os.IsNotExist(err) {
 		if os.Mkdir(homeWeatherPath, 0700) != nil {
-			cli.Exitf(1, "Cannot create %s.\nError: %e", homeWeatherPath, err)
+			log.Exitf(1, "Cannot create %s.\nError: %e", homeWeatherPath, err)
 		}
 	}
 

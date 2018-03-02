@@ -11,7 +11,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/home-IoT/jupiter-cli/gen/client/operations"
+	"github.com/home-IoT/home-weather/gen/client/operations"
 )
 
 // Default jupiter HTTP client.

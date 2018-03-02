@@ -7,6 +7,7 @@ import (
 	"github.com/alecthomas/kingpin"
 	"github.com/home-IoT/home-weather/internal/cli"
 	"github.com/home-IoT/home-weather/internal/config"
+	"github.com/home-IoT/home-weather/internal/log"
 )
 
 var (
@@ -27,15 +28,18 @@ var (
 	configSetJupiterURLEntryArg = configSetJupiterURLEntry.Arg("url", "url arg").String()
 
 	configGetJupiterURLEntry = configGetCommand.Command("jupiter", "get jupiter url")
+
+	// list
+	listCommand = app.Command("list", "list sensors")
 )
 
 func main() {
 	initArgs()
 
 	parse, err := app.Parse(os.Args[1:])
-	cli.InitLog(*args.DebugFlag)
+	log.InitLog(*args.DebugFlag)
 
-	cli.Debugf("args <%#v>\n", os.Args[1:])
+	log.Debugf("args <%#v>\n", os.Args[1:])
 
 	switch kingpin.MustParse(parse, err) {
 
@@ -47,6 +51,9 @@ func main() {
 
 	case configGetJupiterURLEntry.FullCommand():
 		fmt.Println(config.GetJupiterURL())
+
+	case listCommand.FullCommand():
+		cli.ListSensors()
 
 	default:
 		fmt.Printf("no matching command found")
