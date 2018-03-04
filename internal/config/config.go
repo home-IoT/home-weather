@@ -2,6 +2,7 @@ package config
 
 import (
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -19,19 +20,33 @@ type WeatherConfig struct {
 	JupiterURL string `yaml:"jupiterURL,omitempty"`
 }
 
-// SetJupiterURL sets the URL of the Jupiter service in the configuration file
-func SetJupiterURL(url string) {
+// SetJupiterURLString sets the URL of the Jupiter service in the configuration file
+func SetJupiterURLString(url string) {
 	config := WeatherConfig{}
 	readConfigIfExists(&config)
 	config.JupiterURL = url
 	writeWeatherConfig(&config)
 }
 
-// GetJupiterURL returns the currently configured URL of the Jupiter service
-func GetJupiterURL() string {
+// GetJupiterURLString returns the currently configured URL of the Jupiter service as string
+func GetJupiterURLString() string {
 	config := WeatherConfig{}
 	readConfigIfExists(&config)
 	return strings.TrimSpace(config.JupiterURL)
+}
+
+// GetJupiterURL returns the currently configured URL of the Jupiter service
+func GetJupiterURL() *url.URL {
+	jURLConfigured := GetJupiterURLString()
+	if jURLConfigured == "" {
+		log.Exitf(1, "Jupiter URL is empty. Please configure the tool with a valid URL for the Jupiter service.")
+	}
+	jURL, err := url.Parse(jURLConfigured)
+	if err != nil {
+		log.Debugf("%v", err)
+		log.Exitf(1, "The Jupiter URL is not valid.")
+	}
+	return jURL
 }
 
 func writeWeatherConfig(data *WeatherConfig) {
