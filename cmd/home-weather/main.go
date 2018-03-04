@@ -34,7 +34,7 @@ var (
 
 	// read
 	readCommand           = app.Command("read", "read sensor(s)")
-	readCommandSensorList = readCommand.Arg("sensor-ids", "comma-separated list of sensors").String()
+	readCommandSensorList = readCommand.Arg("sensor-ids", "comma-separated list of sensors").Required().String()
 )
 
 func main() {

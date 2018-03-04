@@ -72,18 +72,23 @@ func ListSensors() {
 
 // ReadSensors reads data from the sensors and prints the results
 func ReadSensors(sensorList string) {
-	sensorIDs := strings.Split(sensorList, ",")
-	if len(sensorIDs) == 0 {
+	if strings.TrimSpace(sensorList) == "" {
 		log.Exitf(1, "No valid sensor ID is given.")
 	}
 
+	sensorIDs := strings.Split(sensorList, ",")
+
+	ids := map[string]bool{}
 	dataChannel := make(chan *models.SensorData)
 	for _, id := range sensorIDs {
-		go readSensor(id, dataChannel)
+		if _, ok := ids[id]; !ok {
+			ids[id] = true
+			go readSensor(id, dataChannel)
+		}
 	}
 
 	sensorDataList := []*sensorData{}
-	for i := 0; i < len(sensorIDs); i++ {
+	for i := 0; i < len(ids); i++ {
 		sensorData := <-dataChannel
 		if sensorData != nil {
 			sensorDataList = append(sensorDataList, consumeSensorData(sensorData))
@@ -95,6 +100,17 @@ func ReadSensors(sensorList string) {
 		return
 	}
 
+	results := processReadings(sensorDataList)
+
+	if yamlData, err := yaml.Marshal(&results); err != nil {
+		log.Debugf("%v", err)
+		log.Fatalf("Cannot encode summary data as YAML.", err)
+	} else {
+		fmt.Printf("%s", yamlData)
+	}
+}
+
+func processReadings(sensorDataList []*sensorData) readingResults {
 	results := readingResults{}
 	results.Readings = sensorDataList
 	if len(sensorDataList) > 1 {
@@ -140,12 +156,7 @@ func ReadSensors(sensorList string) {
 		results.Summary.HumStats.Median = median(humids)
 	}
 
-	if yamlData, err := yaml.Marshal(&results); err != nil {
-		log.Debugf("%v", err)
-		log.Fatalf("Cannot encode summary data as YAML.", err)
-	} else {
-		fmt.Printf("%s", yamlData)
-	}
+	return results
 }
 
 func median(data []float64) float64 {
@@ -196,7 +207,13 @@ func initJupiterURL() {
 func handleJupiterError(err error) {
 	if err != nil {
 		log.Debugf("%v", err)
-		log.Exitf(1, "Cannot access Jupiter.")
+		switch err.(type) {
+		case *url.Error:
+			log.Exitf(1, "Cannot access Jupiter.")
+
+		default:
+			log.Exitf(1, "Erorr reading sensor data.")
+		}
 	}
 }
 
