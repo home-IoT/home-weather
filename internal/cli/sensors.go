@@ -2,13 +2,14 @@ package cli
 
 import (
 	"fmt"
+	"net/url"
+
 	httptransport "github.com/go-openapi/runtime/client"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/home-IoT/home-weather/gen/client"
 	"github.com/home-IoT/home-weather/gen/client/operations"
 	"github.com/home-IoT/home-weather/internal/config"
 	"github.com/home-IoT/home-weather/internal/log"
-	"net/url"
 )
 
 // ListSensors lists the available sensors
@@ -34,6 +35,10 @@ func ListSensors() {
 }
 
 func newSensorsHTTPClient() *client.Jupiter {
+	jURLConfigured := config.GetJupiterURL()
+	if jURLConfigured == "" {
+		log.Exitf(1, "Jupiter URL is empty. Please configure the tool with a valid URL for the Jupiter service.")
+	}
 	jURL, err := url.Parse(config.GetJupiterURL())
 	if err != nil {
 		log.Debugf("%v", err)

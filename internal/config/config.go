@@ -1,12 +1,14 @@
 package config
 
 import (
-	"github.com/home-IoT/home-weather/internal/log"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
+
+	"github.com/home-IoT/home-weather/internal/log"
+	"gopkg.in/yaml.v2"
 )
 
 const configDirName = ".home-weather"
@@ -29,7 +31,7 @@ func SetJupiterURL(url string) {
 func GetJupiterURL() string {
 	config := WeatherConfig{}
 	readConfigIfExists(&config)
-	return config.JupiterURL
+	return strings.TrimSpace(config.JupiterURL)
 }
 
 func writeWeatherConfig(data *WeatherConfig) {
