@@ -1,5 +1,6 @@
 include ./MANIFEST
 include ./scripts/release.mk
+include ./test/test.mk
 
 DATE := $(shell date | sed 's/\ /_/g')
 
@@ -14,9 +15,9 @@ MAIN_FILE=cmd/home-weather/main.go
 
 # --- Repo 
 
-initialize: clean swagger-generate
+initialize: clean swagger-gen
 	dep init
-	$(MAKE) dep
+	$(MAKE) go-dep
 
 clean:
 	mkdir -p bin
@@ -41,6 +42,7 @@ swagger-validate:
 	swagger validate $(SWAGGER_FILE)
 
 swagger-gen: clean
+	mkdir -p gen
 	swagger generate client -f $(SWAGGER_FILE) -t gen
 
 # --- Common Go
@@ -69,19 +71,19 @@ go-validate:
 
 go-build-linux:
 	@echo "build linux binary"
-	$(MAKE) go-build GOOS=linux GOARCH=amd64 TARGET=$(PROJECT)-linux-amd64
+	$(MAKE) go-build GOOS=linux GOARCH=amd64 TARGET=$(EXECUTABLE)-linux-amd64
 
 go-build-pi:
 	@echo "build linux binary for raspberry pi"
-	$(MAKE) go-build GOOS=linux GOARCH=arm GOARM=7 TARGET=$(PROJECT)-linux-arm7
+	$(MAKE) go-build GOOS=linux GOARCH=arm GOARM=7 TARGET=$(EXECUTABLE)-linux-arm7
 
 go-build-windows:
 	@echo "build windows binary"
-	$(MAKE) go-build GOOS=windows GOARCH=386 TARGET=$(PROJECT)-windows-386.exe
+	$(MAKE) go-build GOOS=windows GOARCH=386 TARGET=$(EXECUTABLE)-windows-386.exe
 
 go-build-mac:
 	@echo "build Mac binary"
-	$(MAKE) go-build GOOS=darwin GOARCH=amd64 TARGET=$(PROJECT)-darwin-amd64
+	$(MAKE) go-build GOOS=darwin GOARCH=amd64 TARGET=$(EXECUTABLE)-darwin-amd64
 
 TARGET ?= $(EXECUTABLE)
 
@@ -92,8 +94,7 @@ go-build-all: go-build-pi go-build-linux go-build-windows go-build-mac
 
 # --- Release
 
-go-release-all: clean 
-	$(MAKE) go-build-all
+go-release-all: clean go-build-all
 	mkdir -p ./release
 	rm -rf ./release/*
 	chmod +x bin/*
