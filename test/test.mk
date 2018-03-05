@@ -70,11 +70,11 @@ test-step-reading-list-of-sensors:
 	@rm -f $(TEST_TEMP_FILE)
 	@touch $(TEST_TEMP_FILE)
 	@echo Test reading list of sensors... 
-	@$(TEST_BIN) read kitchen,livingroom,bedroom | grep count | sed 's/^.*: //g' > $(TEST_TEMP_FILE)
+	@$(TEST_BIN) read -f kitchen,livingroom,bedroom | grep count | sed 's/^.*: //g' > $(TEST_TEMP_FILE)
 	@read i < $(TEST_TEMP_FILE); \
-		if [ $$i -ne 3 ]; \
-			then echo "Failed reading all 3 sensors."; rm $(TEST_TEMP_FILE); exit 1; \
-			else echo "Passed."; \
+		if [ $$i -eq 3 ]; \
+			then echo "Passed."; \
+			else echo "Failed reading all 3 sensors."; rm $(TEST_TEMP_FILE); exit 1; \
 		fi
 	@rm -f $(TEST_TEMP_FILE)
 
