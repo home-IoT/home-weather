@@ -55,12 +55,9 @@ type readingResults struct {
 func ListSensors() {
 	list := getAllSensorIDs()
 
-	if len(list) == 0 {
-		fmt.Println("sensors: []")
-	} else {
-		fmt.Println("sensors:")
+	if len(list) > 0 {
 		for _, id := range list {
-			fmt.Printf("  - %s\n", id)
+			fmt.Printf("- %s\n", id)
 		}
 	}
 }
@@ -109,7 +106,16 @@ func ReadSensors(sensorList string, fullOutput bool, allSensors bool) {
 
 	results := processReadings(sensorDataList, fullOutput)
 
-	if yamlData, err := yaml.Marshal(&results); err != nil {
+	var yamlData []byte
+	var err error
+
+	if fullOutput {
+		yamlData, err = yaml.Marshal(&results)
+	} else {
+		yamlData, err = yaml.Marshal(&results.Readings)
+	}
+
+	if err != nil {
 		log.Debugf("%v", err)
 		log.Fatalf("Cannot encode summary data as YAML.")
 	} else {
