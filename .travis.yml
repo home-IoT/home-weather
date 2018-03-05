@@ -1,0 +1,41 @@
+language: go
+sudo: false
+notifications:
+  email: false
+jobs:
+  include:
+  - stage: test
+    go_import_path: github.com/home-IoT/home-weather
+    install:
+    - make get-tools
+    os: linux
+    go: 1.9.x
+    script:
+    - make go-dep go-validate
+  - go: 1.9.x
+    stage: deploy
+    go_import_path: github.com/home-IoT/home-weather
+    install: skip
+    script: skip
+    before_deploy:
+    - make clean get-tools go-dep go-release-all
+    deploy:
+    - provider: releases
+      api_key:
+        secure: D8cWV+Yf2s1vpYUNZbY7cl88X9JmG2bqUrJn35GhBfLY1VBOqycTvJF8QGPfsp1yCDvj3XF2Q2REYhNAX8K+uu5PnZ0cxxg4GNsUCeZCEEmccIX8whHnVD17BMtjaxMKIcn9VvEXTD1qunc4CKPmvqUt1mBGvJuycrj06oJ1duFL5YEt1BGZWEBwnvPn8qf/SAIKVyOF8dZimDbX1zxYf+Ijq0qNSdz5fQmvNXpCwnU//y9ClBpqWKWNtXFyav96y8204OCK59uSdLyFHym9y3g+1Z71TR1LzTKdfM4bGNWNpkMyelDO+A1QTsX8fNaXxl0sK1qrTysuZsqYnsDjbci0QTcYiZnBBmAbS2lOgHj7Rs4mZ8qFKnEPMXsJO0R4Uq9bI7DBldRUAPDmkBB/WIGMbGObh8OfXWALoHAOvUXm8ipz2lmyXx75z6unkgDNJF1IwPnqaRwlocn6thPSUzJAnzq/buVr0wKOC+dAcfpGxK+uzOr+wyPZoigUiVYPGbDOGRyHhByoPFxQrwR61qzZQqlG/Ddka6t/lhVpYQ8KUUruGCQrjtfNfxkHs94QaPiTE1yiYyZtGf/7E8U7g9VS7ZuJAEMH5HGPjw4EiSe1Yqo2wILOgdKTGY0gsV4gpY0CLRZSi6G4I58ZHxrIc0u90czSaADLXxBd4YjIdNA=
+      file:
+      - release/home-weather-darwin-amd64
+      - release/home-weather-darwin-amd64.sha256
+      - release/home-weather-linux-amd64
+      - release/home-weather-linux-amd64.sha256
+      - release/home-weather-linux-arm7
+      - release/home-weather-linux-arm7.sha256
+      - release/home-weather-windows-386.exe
+      - release/home-weather-windows-386.exe.sha256
+      skip_cleanup: true
+      on:
+        repo: home-IoT/home-weather
+        branch: develop
+        tags: true
+addons:
+  ssh_known_hosts: github.com
