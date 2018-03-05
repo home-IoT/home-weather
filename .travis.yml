@@ -12,6 +12,7 @@ jobs:
     go: 1.9.x
     script:
     - make go-dep go-validate
+    - make test
   - go: 1.9.x
     stage: deploy
     go_import_path: github.com/home-IoT/home-weather
