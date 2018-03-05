@@ -29,12 +29,13 @@ var (
 
 	configGetJupiterURLEntry = configGetCommand.Command("jupiter", "get jupiter url")
 
-	// list
+	// list sensors
 	listCommand = app.Command("list", "list sensors")
 
-	// read
-	readCommand           = app.Command("read", "read sensor(s)")
-	readCommandSensorList = readCommand.Arg("sensor-ids", "comma-separated list of sensors").Required().String()
+	// read sensors
+	readCommand              = app.Command("read", "read sensor(s)")
+	readCommandSensorList    = readCommand.Arg("sensor-ids", "comma-separated list of sensors").Required().String()
+	readCommandVerbosityFlag = readCommand.Flag("full", "print out details and a summary").Short('f').Bool()
 )
 
 func main() {
@@ -60,7 +61,7 @@ func main() {
 		cli.ListSensors()
 
 	case readCommand.FullCommand():
-		cli.ReadSensors(*readCommandSensorList)
+		cli.ReadSensors(*readCommandSensorList, *readCommandVerbosityFlag)
 
 	default:
 		fmt.Printf("no matching command found")

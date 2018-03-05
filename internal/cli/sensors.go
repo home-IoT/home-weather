@@ -25,7 +25,7 @@ var jURLOnce sync.Once
 var jupiterURL *url.URL
 
 type sensorData struct {
-	ID          string  `yaml:"id"`
+	ID          string  `yaml:"id,omitempty"`
 	Name        string  `json:"name"`
 	Temperature float64 `yaml:"temperature"`
 	Humidity    float64 `yaml:"humidity"`
@@ -71,7 +71,7 @@ func ListSensors() {
 }
 
 // ReadSensors reads data from the sensors and prints the results
-func ReadSensors(sensorList string) {
+func ReadSensors(sensorList string, fullOutput bool) {
 	if strings.TrimSpace(sensorList) == "" {
 		log.Exitf(1, "No valid sensor ID is given.")
 	}
@@ -91,7 +91,11 @@ func ReadSensors(sensorList string) {
 	for i := 0; i < len(ids); i++ {
 		sensorData := <-dataChannel
 		if sensorData != nil {
-			sensorDataList = append(sensorDataList, consumeSensorData(sensorData))
+			csd := consumeSensorData(sensorData)
+			if !fullOutput {
+				csd.ID = ""
+			}
+			sensorDataList = append(sensorDataList, csd)
 		}
 	}
 
@@ -100,20 +104,20 @@ func ReadSensors(sensorList string) {
 		return
 	}
 
-	results := processReadings(sensorDataList)
+	results := processReadings(sensorDataList, fullOutput)
 
 	if yamlData, err := yaml.Marshal(&results); err != nil {
 		log.Debugf("%v", err)
-		log.Fatalf("Cannot encode summary data as YAML.", err)
+		log.Fatalf("Cannot encode summary data as YAML.")
 	} else {
 		fmt.Printf("%s", yamlData)
 	}
 }
 
-func processReadings(sensorDataList []*sensorData) readingResults {
+func processReadings(sensorDataList []*sensorData, fullOutput bool) readingResults {
 	results := readingResults{}
 	results.Readings = sensorDataList
-	if len(sensorDataList) > 1 {
+	if fullOutput && len(sensorDataList) > 1 {
 		results.Summary = &readingSummary{}
 		results.Summary.Count = len(sensorDataList)
 		results.Summary.HumStats.Max = 0
