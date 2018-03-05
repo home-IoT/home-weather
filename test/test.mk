@@ -48,9 +48,9 @@ test-step-list:
 	@echo Test list of sensors... 
 	@$(TEST_BIN) list | wc -l > $(TEST_TEMP_FILE)
 	@read i < $(TEST_TEMP_FILE); \
-		if [ "$$i" != "4" ]; \
-			then echo "List of sensors must show 3 sensors ($$i)."; rm $(TEST_TEMP_FILE); exit 1; \
-			else echo "Passed."; \
+		if [ $$i -eq 3 ]; \
+			then echo "Passed."; \
+			else echo "List of sensors must show 3 sensors ($$i)."; rm $(TEST_TEMP_FILE); exit 1; \
 		fi
 	@rm -f $(TEST_TEMP_FILE)
 

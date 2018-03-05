@@ -12,15 +12,15 @@ server:
 # list of sensors
 sensors:
   - id: kitchen
-    name: Mock sensor
+    name: Kitchen
     host: 127.0.0.1
     port: 8081
   - id: bedroom
-    name: Mock sensor
+    name: Bedroom
     host: 127.0.0.1
     port: 8082
   - id: livingroom
-    name: Mock sensor
+    name: Livingroom
     host: 127.0.0.1
     port: 8083
 
