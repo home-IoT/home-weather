@@ -34,8 +34,9 @@ var (
 
 	// read sensors
 	readCommand              = app.Command("read", "read sensor(s)")
-	readCommandSensorList    = readCommand.Arg("sensor-ids", "comma-separated list of sensors").Required().String()
+	readCommandSensorList    = readCommand.Arg("sensor-ids", "comma-separated list of sensors").String()
 	readCommandVerbosityFlag = readCommand.Flag("full", "print out details and a summary").Short('f').Bool()
+	readCommandAllFlag       = readCommand.Flag("all", "read all sensors").Short('a').Bool()
 )
 
 func main() {
@@ -61,7 +62,7 @@ func main() {
 		cli.ListSensors()
 
 	case readCommand.FullCommand():
-		cli.ReadSensors(*readCommandSensorList, *readCommandVerbosityFlag)
+		cli.ReadSensors(*readCommandSensorList, *readCommandVerbosityFlag, *readCommandAllFlag)
 
 	default:
 		fmt.Printf("no matching command found")

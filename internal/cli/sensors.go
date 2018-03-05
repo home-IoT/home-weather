@@ -53,30 +53,33 @@ type readingResults struct {
 
 // ListSensors lists the available sensors
 func ListSensors() {
-	httpClient := newSensorsHTTPClient()
-	params := operations.NewGetSensorsListParams()
-	resp, err := httpClient.Operations.GetSensorsList(params)
-	handleJupiterError(err)
-
-	list := resp.Payload.Data
+	list := getAllSensorIDs()
 
 	if len(list) == 0 {
 		fmt.Println("sensors: []")
 	} else {
 		fmt.Println("sensors:")
-		for _, card := range list {
-			fmt.Printf("  - %s\n", *card.ID)
+		for _, id := range list {
+			fmt.Printf("  - %s\n", id)
 		}
 	}
 }
 
 // ReadSensors reads data from the sensors and prints the results
-func ReadSensors(sensorList string, fullOutput bool) {
-	if strings.TrimSpace(sensorList) == "" {
-		log.Exitf(1, "No valid sensor ID is given.")
-	}
+func ReadSensors(sensorList string, fullOutput bool, allSensors bool) {
+	sensorList = strings.TrimSpace(sensorList)
 
-	sensorIDs := strings.Split(sensorList, ",")
+	var sensorIDs []string
+	switch {
+	case allSensors:
+		sensorIDs = getAllSensorIDs()
+
+	case sensorList == "":
+		log.Exitf(1, "No valid sensor ID is given.")
+
+	default:
+		sensorIDs = strings.Split(sensorList, ",")
+	}
 
 	ids := map[string]bool{}
 	dataChannel := make(chan *models.SensorData)
@@ -112,6 +115,22 @@ func ReadSensors(sensorList string, fullOutput bool) {
 	} else {
 		fmt.Printf("%s", yamlData)
 	}
+}
+
+func getAllSensorIDs() []string {
+	httpClient := newSensorsHTTPClient()
+	params := operations.NewGetSensorsListParams()
+	resp, err := httpClient.Operations.GetSensorsList(params)
+	handleJupiterError(err)
+
+	list := resp.Payload.Data
+	ids := make([]string, len(list))
+
+	for i, card := range list {
+		ids[i] = *card.ID
+	}
+
+	return ids
 }
 
 func processReadings(sensorDataList []*sensorData, fullOutput bool) readingResults {
