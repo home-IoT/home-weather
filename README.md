@@ -1,5 +1,9 @@
 # Home Weather CLI (Jupiter CLI)
 
+ `master`   | `develop`     |
+| ---------- | --------------|
+| [![Build Status](https://travis-ci.org/home-IoT/home-weather.svg?branch=master)](https://travis-ci.org/home-IoT/home-weather) | [![Build Status](https://travis-ci.org/home-IoT/home-weather.svg?branch=develop)](https://travis-ci.org/home-IoT/home-weather) |
+
 **In Progress**: This repository is a work in progress. Should be completed in a week from now. ;)
 
 A simple CLI to query the current status of weather sensors around the house based on the 
