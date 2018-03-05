@@ -14,7 +14,7 @@ Make sure you that
 #### Makefile
 There is a [`Makefile`](Makefile) provided that offers a number of targets for preparing, building and running the CLI. To build the binary, run:
 ```
-make clean dep go-build
+make clean go-dep go-build
 ```
 
 ## License
